@@ -4,24 +4,21 @@ Servicio web donde subir las tiendas de PrestaShop de la asignatura de Comercio 
 Estructura General del Proyecto
 Roles de los Componentes:
 1. Frontend (Vue.js):
- Interfaz gráfica para que los usuarios gestionen sus tiendas.
+ Interfaz gráfica para que los usuarios gestionen sus backups.
  Funcionalidades:
- - Registro y autenticación de usuarios.
- - Creación y configuración de tiendas.
  - Subida de archivos SQL (bases de datos).
- - Gestión de archivos (imágenes, temas, módulos).
+ - Gestión de archivos
+ - Comunicación con el backend mediante APIs RESTful
 2. Backend (FastAPI):
  Expondrá APIs RESTful para gestionar:
- - Usuarios y autenticación (delegado a Keycloak).
- - Creación de bases de datos para tiendas.
+ - Gestión de backups
+ - Autenticación y autorización con Keycloak.
  - Interacción con MinIO para el almacenamiento.
- - Ejecución de scripts para configurar instancias de Prestashop.
 3. Keycloak:
  Gestión de usuarios y roles:
  - Administra usuarios y contraseñas.
  - Proporciona tokens de autenticación OAuth2/JWT para las peticiones al backend.
-4. SQL (MariaDB/MySQL):
- - Almacena los datos de las tiendas (tablas de Prestashop).
- - Mantiene la información del sistema (si necesitas almacenar datos adicionales).
-5. MinIO:
- - Gestión del almacenamiento de archivos (temas, imágenes, módulos).
+4. MinIO:
+ - Almacenamiento de los backups de las tiendas de Prestashop.
+ - Es utilizado para subir, listar y eliminar los archivos de backup.
+   Se puede ver el [frontend](https://www.canva.com/design/DAGZ1Mo0siI/WryKV47wWqfTLKU76XSrTg/edit?utm_content=DAGZ1Mo0siI&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton)
