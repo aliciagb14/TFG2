@@ -2,9 +2,14 @@
     <div>
       <h1>Gestión de Tiendas</h1>
     </div>
-  </template>
+</template>
   
-  <script setup>
+<script setup>
 
-  </script>
-  
+</script>
+
+
+<style scoped>
+
+
+</style>
