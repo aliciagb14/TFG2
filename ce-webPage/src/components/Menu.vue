@@ -1,5 +1,6 @@
 <template>
     <h1>Gestión de Tiendas</h1>
+
     <n-space vertical>
         <n-input round v-model:value="username" type="text" placeholder="Username" />
         <n-input round v-model:value="password" type="password" placeholder="Password" />
@@ -9,6 +10,8 @@
         <n-button type="error" ghost @click="forgotPassword">Forgot your password?
             <n-icon><ForgotPasswordIcon/></n-icon>
         </n-button>
+        <!-- Enlace para ir a la página "X de" -->
+        <!-- <router-link to="/about">Ir a Acerca de</router-link>-->
     </div>
 </template>
   
