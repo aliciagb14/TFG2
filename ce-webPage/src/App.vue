@@ -1,9 +1,9 @@
 <script setup>
-import Menu from './components/Menu.vue';
+import Login from './components/Login.vue';
 </script>
 
 <template>
-  <Menu />
+  <Login />
 </template>
 
 <style scoped>
