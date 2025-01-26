@@ -1,4 +1,5 @@
 <template>
+<<<<<<< HEAD
     <!-- <div > -->
     <div class="menu-container" v-if="!isauthenticated">
         <div class="form-container">
@@ -16,6 +17,21 @@
                 </div>
             </div>
         </div>
+=======
+    <h1>Gestión de Tiendas</h1>
+
+    <n-space vertical>
+        <n-input round v-model:value="username" type="text" placeholder="Username" />
+        <n-input round v-model:value="password" type="password" placeholder="Password" />
+    </n-space>
+    <div class="button-container">
+        <n-button type="success" ghost @click="handleLogin" >Login</n-button>
+        <n-button type="error" ghost @click="forgotPassword">Forgot your password?
+            <n-icon><ForgotPasswordIcon/></n-icon>
+        </n-button>
+        <!-- Enlace para ir a la página "X de" -->
+        <!-- <router-link to="/about">Ir a Acerca de</router-link>-->
+>>>>>>> cf3a84d8d45ba2168fbd76c5c94dff0a8d836d73
     </div>
     <ListUsers v-if="isauthenticated" :username="authenticatedUser"/>
 </template>

@@ -10,9 +10,16 @@
   },
   "dependencies": {
     "@vicons/ionicons5": "0.13.0",
+<<<<<<< HEAD
     "keycloak-js": "^26.0.7",
     "naive-ui": "2.41.0",
     "vue": "^3.5.13"
+=======
+    "naive-ui": "2.41.0",
+    "package.json": "^2.0.1",
+    "vue": "^3.5.13",
+    "vue-router": "^4.5.0"
+>>>>>>> cf3a84d8d45ba2168fbd76c5c94dff0a8d836d73
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.2.1",
