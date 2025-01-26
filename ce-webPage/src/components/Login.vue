@@ -39,7 +39,6 @@ onMounted(() => {
         if (isauthenticated.value) {
             authenticatedUser.value = keycloak.tokenParsed?.preferred_username || 'Usuario';
             isAdmin.value = keycloak.tokenParsed?.realm_access?.roles.includes('admin') || false;
-            console.log(user `${authenticatedUser.value}` tiene rol admin `${isAdmin.value}`)
         }
     });
 });
