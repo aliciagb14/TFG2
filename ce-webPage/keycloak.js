@@ -18,6 +18,10 @@ export const initKeycloak = (isauthenticated) => {
                     // Extrae el nombre de usuario desde el token decodificado
                     const username = keycloak.tokenParsed?.preferred_username || 'Usuario desconocido';
                     console.log(`Authenticated as: ${username}`);
+                    const roles = keycloak.tokenParsed?.realm_access?.roles || [];
+                    console.log(`Role as:` , roles)
+                    const isAdmin = roles.includes('admin');
+                    return { username, isAdmin };
                 }
             })
             .catch(error => {

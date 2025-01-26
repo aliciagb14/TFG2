@@ -26,3 +26,11 @@ Roles de los Componentes:
 
 
 /* Añadida la nueva rama (Desarrollo) */
+
+
+/*Acceso usuarios*/
+1. Levantar el contenedor  desde Docker Desktop
+2. añadir el usuario en KeyCloak
+3. añadir el cliente en Keycloak
+4. configurarle los puertos para la conversión del contenedor al PC
+5. levantar el front desde la consola con npm run dev
