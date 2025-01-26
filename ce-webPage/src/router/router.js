@@ -1,19 +1,25 @@
-// import { createRouter } from "vue-router";
-// import Login from "@/components/Login.vue";
+// src/router/router.js
+import { createRouter, createWebHistory } from 'vue-router';
+import Login from '@/components/Login.vue';
+import Home from '@/components/Home.vue';
 
-// //Definición de las rutas de la aplicación
-// const routes = [
-//   {
-//     path: "/",
-//     name: "Login",
-//     component: Login,
-//   },
-//   //Añadir todas las rutas de la misma forma.
-// ];
 
-// const router = createRouter({
-//   history: createWebHistory(),
-//   routes
-// });
+const routes = [
+  {
+    path: '/',
+    name: 'Login',
+    component: Login,
+  },
+  {
+    path: '/home',
+    name: 'Home',
+    component: Home,
+  },
+];
 
-// export default router;
+const router = createRouter({
+  history: createWebHistory(),
+  routes,
+});
+
+export default router;
