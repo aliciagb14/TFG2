@@ -17,7 +17,7 @@
             </div>
         </div>
     </div>
-    <ListUsers v-if="isauthenticated" :username="authenticatedUser"/>
+    <ListUsers v-if="isauthenticated" :username="authenticatedUser" :isAdmin="isAdmin"/>
 </template>
   
 <script setup>
@@ -31,12 +31,15 @@ const username = ref('')
 const password = ref('')
 const isauthenticated = ref(false)
 const authenticatedUser = ref('');
+const isAdmin = ref(true)
 
 onMounted(() => {
 //   initKeycloak(isauthenticated);
     initKeycloak(isauthenticated).then(() => {
         if (isauthenticated.value) {
             authenticatedUser.value = keycloak.tokenParsed?.preferred_username || 'Usuario';
+            isAdmin.value = keycloak.tokenParsed?.realm_access?.roles.includes('admin') || false;
+            console.log(user `${authenticatedUser.value}` tiene rol admin `${isAdmin.value}`)
         }
     });
 });
