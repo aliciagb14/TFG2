@@ -7,6 +7,7 @@ const keycloak = new Keycloak({
 });
 
 let initialized = false;
+keycloak.authServerUrl = 'http://localhost:8080'; 
 
 export const initKeycloak = (isauthenticated) => {
     if (!initialized) {
@@ -28,6 +29,11 @@ export const initKeycloak = (isauthenticated) => {
                 console.error('Failed to initialize Keycloak', error);
             });
     }
+};
+
+export const forgotPassword = () => {
+    const resetPasswordUrl = `${keycloak.authServerUrl}/realms/${keycloak.realm}/account`;
+    window.location.href = resetPasswordUrl;
 };
 
 

@@ -25,7 +25,7 @@ import {ref, onMounted, watch} from 'vue'
 import ListUsers from '@/components/ListUsers.vue';
 import { NInput, NButton, NCard, NSpace, NIcon } from 'naive-ui'
 import { LockClosedOutline as ForgotPasswordIcon} from '@vicons/ionicons5';
-import keycloak, { initKeycloak } from '../../keycloak'
+import keycloak, { initKeycloak, forgotPassword } from '../../keycloak'
 
 const username = ref('')
 const password = ref('')
@@ -56,7 +56,7 @@ const handleLogin = async () => {
     console.log("preIF")
     if (response && keycloak.token) {
         console.log('Token received:', keycloak.token);
-        const tokenParsed = keycloak.tokenParsed;  // Keycloak suele tener tokenParsed que contiene info del usuario
+        const tokenParsed = keycloak.tokenParsed;
         authenticatedUser.value = tokenParsed?.preferred_username || 'Usuario';
         isauthenticated.value = true;
         console.log('Authenticated with {username + password}');
@@ -66,6 +66,7 @@ const handleLogin = async () => {
     console.error('Authentication failed:', error);
   }
 };
+
 
 watch(isauthenticated, (newValue) => {
     if (newValue) {
