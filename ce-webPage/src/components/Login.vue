@@ -5,8 +5,8 @@
             <h1>Gestión de Tiendas</h1>
             <div>
                 <n-space vertical class="input-container">
-                    <n-input round v-model:value="username" type="text" placeholder="Username" />
-                    <n-input round v-model:value="password" type="password" placeholder="Password" />
+                    <n-input v-model:value="username" type="text" placeholder="Username" clearable  />
+                    <n-input v-model:value="password" type="password" placeholder="Password" show-password-on="click"/>
                 </n-space>
                 <div class="button-container">
                     <n-button type="success" ghost @click="handleLogin" >Login</n-button>
@@ -79,39 +79,79 @@ watch(isauthenticated, (newValue) => {
 
 <style scoped>
     .Login-container {
-        background-color: #bed0f8;
+        position: fixed;
+        top: 0;
+        left: 0;
         width: 100vw;
         height: 100vh;
+        background: linear-gradient(135deg, #a8c3ff, #6b8ef7);
         display: flex;
         justify-content: center;
         align-items: center;
     }
 
+    .form-container {
+        background: white;
+        padding: 30px 25px;
+        border-radius: 15px;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.15);
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 350px;
+    }
+
     h1 {
         margin-bottom: 20px;
-        font-size: 2rem;
-        color: #333;
+        font-size: 2.2rem;
+        color: #3a3a3a;
+        font-weight: bold;
     }
 
     .input-container {
-        width: 200%;
-        align-content: center;
+        width: 100%;
+        margin-top: 15px;
     }
 
-    .n-input {
-        width: 100%;
+    .n-input:focus {
+        border-color: #4a6cf7;
+        box-shadow: 0 0 8px rgba(75, 102, 247, 0.3);
     }
 
     .button-container {
         display: flex;
-        justify-content: center;
-        gap: 10px;
-        margin-top: 10px;
+        flex-direction: column;
+        width: 100%;
+        margin-top: 15px;
     }
 
     .n-button {
-        padding: 10px 20px;
-        font-size: 16px;
-        border-radius: 5px;
+        padding: 12px;
+        font-size: 1rem;
+        border-radius: 8px;
+        width: 100%;
+        transition: all 0.3s ease;
+        margin-top:10px
+    }
+
+    .n-button:hover {
+        transform: scale(1.05);
+    }
+
+    .forgot-password {
+        margin-top: 12px;
+        font-size: 0.9rem;
+        color: #4a4a32;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+        cursor: pointer;
+        transition: color 0.3s ease;
+    }
+
+    .forgot-password:hover {
+        color: #6b8ef7;
     }
 </style>

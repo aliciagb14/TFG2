@@ -1,11 +1,23 @@
 <template>
   <div class="layout">
-    <Sidebar/>
+    <Sidebar class="sidebar"/>
     <div class="main-content">
+      <div>
         <h2>Bienvenido, {{ username }}</h2>
-        <h3>Lista de Usuarios</h3>
+      </div>
+      <div class="header">
+        <h2>Users</h2>
+        <n-button text class="add-user-btn">
+          Add user 
+          <n-icon>
+            <AddUserIcon/>
+          </n-icon>
+        </n-button>
+      </div> 
+      <div class="table-container">
         <n-data-table v-if="isAdmin && !loading" :columns="columns" :data="data" bordered />
         <p v-else>No tienes permisos para ver esta información.</p>
+      </div> 
     </div>
   </div>
 </template>
@@ -14,6 +26,7 @@
 import { ref, onMounted } from 'vue';
 import { NDataTable } from 'naive-ui';
 import { getUsers } from '@/services/UserService';
+import { PersonAddSharp as AddUserIcon} from '@vicons/ionicons5';
 import Sidebar from '@/utils/Sidebar.vue';
 
 const data = ref([]);
@@ -77,38 +90,77 @@ const fetchUsers = async () => {
 .layout {
   display: flex;
   height: 100vh;
-  background-color: #bed0f8;
+  width: 100vw;
+  background-color: #a8c3ff;
 }
 
 .sidebar {
-  flex: 0 0 250px;
-  background-color: #bed0f8;
+  flex: 0 0 200px;
+  background-color: #4a4a32;
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100vh;
+
 }
 
 .main-content {
   flex: 1;
   padding: 20px;
-  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #a8c3ff;
 }
 
-.n-table {
-  margin-top: 20px;
-  background-color: #fff;
+.header {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.header h2 {
+  font-size: 1.8rem;
+  color: #4a4a32;
+}
+
+.add-user-btn {
+  font-size: 1rem;
+  color: #4a4a32;
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+.add-user-btn:hover {
+  color: #6b8ef7;
+}
+
+.table-container {
+  width: 100%;
+  background: white;
+  padding: 20px;
   border-radius: 8px;
-}
-
-h2, h3 {
-  margin-bottom: 20px;
-  font-size: 22px;
-  color: #333;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.15);
 }
 
 .n-table th {
   background-color: #bed0f8;
-  text-align: left;
+  text-align: center;
+  font-weight: bold;
 }
 
 .n-table td {
   padding: 12px;
+  text-align: center;
+}
+
+.info-text {
+  margin-top: 10px;
+  font-size: 0.9rem;
+  color: #4a4a32;
+  text-align: center;
 }
 </style>
