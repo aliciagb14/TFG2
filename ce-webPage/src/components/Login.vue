@@ -53,7 +53,6 @@ const handleLogin = async () => {
     });
     console.log(username)
     console.log(password)
-    console.log("preIF")
     if (response && keycloak.token) {
         console.log('Token received:', keycloak.token);
         const tokenParsed = keycloak.tokenParsed;
@@ -61,7 +60,6 @@ const handleLogin = async () => {
         isauthenticated.value = true;
         console.log('Authenticated with {username + password}');
     }
-    console.log("postIF")
   } catch (error) {
     console.error('Authentication failed:', error);
   }

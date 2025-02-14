@@ -1,37 +1,41 @@
 <template>
-  <div class="layout">
-    <Sidebar class="sidebar"/>
-    <div class="main-content">
-      <div>
+  <n-grid >
+    <n-grid-item class="sidebar-menu" span="12 m:3">
+        <Sidebar/>
+    </n-grid-item>
+    <n-grid-item class="header" span="12 m:21">
         <h2>Bienvenido, {{ username }}</h2>
-      </div>
-      <div class="header">
-        <h2>Users</h2>
-        <n-button text class="add-user-btn">
-          Add user 
-          <n-icon>
-            <AddUserIcon/>
-          </n-icon>
-        </n-button>
-      </div> 
-      <div class="table-container">
-        <n-data-table v-if="isAdmin && !loading" :columns="columns" :data="data" bordered />
-        <p v-else>No tienes permisos para ver esta información.</p>
-      </div> 
-    </div>
-  </div>
+        <div>
+          <h2>Users</h2>
+          <n-button @click="showModal=!showModal">
+            <n-icon size="20">
+              <AddUserIcon /> 
+            </n-icon>
+          </n-button>
+        </div>
+        <AddUserModal v-model:show="showModal"  @userAdded="handleUserAdded"/>
+        
+        <div class="table-container">
+          <n-data-table v-if="isAdmin && !loading" :columns="columns" :data="data" bordered />
+          <p v-else>No tienes permisos para ver esta información.</p>
+        </div>
+    </n-grid-item>
+  </n-grid>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
-import { NDataTable } from 'naive-ui';
-import { getUsers } from '@/services/UserService';
-import { PersonAddSharp as AddUserIcon} from '@vicons/ionicons5';
+import { ref, onMounted, h, watch } from 'vue';
+import { NDataTable, NGrid, NGridItem, NIcon, NButton } from 'naive-ui';
+import { getUsers, deleteUserService } from '@/services/UserService';
+import { PersonAddSharp as AddUserIcon, CloseCircleOutline as DeleteUserIcon} from '@vicons/ionicons5';
+import AddUserModal from '@/components/AddUserModal.vue'
 import Sidebar from '@/utils/Sidebar.vue';
 
 const data = ref([]);
 const loading = ref(true)
+const showModal = ref(false);
 const isAuthenticated = ref(false);
+
 onMounted(async () => {
     console.log('isAdmin:', props.isAdmin);
     if (props.isAdmin) {
@@ -41,16 +45,31 @@ onMounted(async () => {
 
 const columns = [
     {
-        title: 'Nombre',
-        key: 'firstName',
+      title: 'Nombre',
+      key: 'firstName',
     },
     {
-        title: 'Apellidos',
-        key: 'lastName',
+      title: 'Apellidos',
+      key: 'lastName',
     },
     {
-        title: 'Correo Electrónico',
-        key: 'email',
+      title: 'Correo Electrónico',
+      key: 'email',
+    },
+    {
+      title: 'Acciones',
+      key: 'acciones',
+      render: (row) => h(
+        NButton,
+        {
+          size: 'small',
+          type: 'error',
+          onClick: () => deleteUser(row.id),
+        },
+        {
+          default: () => h(NIcon, () => h(DeleteUserIcon) )
+        }
+      )
     }
 ];
 
@@ -58,6 +77,23 @@ const props = defineProps({
   username: String,
   isAdmin: Boolean
 })
+
+const deleteUser = async (userId) => {
+    if (!confirm(`¿Estás seguro de que deseas eliminar este usuario?`)) {
+        return;
+    }
+    try {
+        await deleteUserService(userId);
+
+        data.value = data.value.filter(user => user.id !== userId);
+
+        console.log(`Usuario con ID ${userId} eliminado de la tabla.`);
+    } catch (error) {
+        console.error('Error al eliminar usuario:', error);
+    }
+};
+
+
 
 const isValidEmail = (email) => {
     const regex = /^[a-zA-Z0-9._%+-]+@alumnos\.upm\.es$/;
@@ -84,83 +120,35 @@ const fetchUsers = async () => {
     loading.value = false;
   }
 };
+
+const handleUserAdded = (newUser) => {
+  data.value.push(newUser);
+};
+
+watch(showModal, (newVal) => {
+  console.log('showModal cambio a: ', newVal);
+});
+
 </script>
 
 <style scoped>
-.layout {
-  display: flex;
-  height: 100vh;
-  width: 100vw;
-  background-color: #a8c3ff;
-}
-
-.sidebar {
-  flex: 0 0 200px;
-  background-color: #4a4a32;
-  padding: 15px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  height: 100vh;
-
-}
-
-.main-content {
-  flex: 1;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  background-color: #a8c3ff;
+.sidebar-menu {
+  background-color: #2e3d4d; /* Color de fondo para diferenciar el sidebar */
+  min-width: 10vw;
+  margin:0;
+  min-height: 100vh; /* Hace que el sidebar ocupe toda la altura de la pantalla */
+  border-right: 1px solid #240b0b; /* Línea divisoria con el contenido principal */
 }
 
 .header {
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 15px;
-}
-
-.header h2 {
-  font-size: 1.8rem;
-  color: #4a4a32;
-}
-
-.add-user-btn {
-  font-size: 1rem;
-  color: #4a4a32;
-  cursor: pointer;
-  transition: color 0.3s;
-}
-
-.add-user-btn:hover {
-  color: #6b8ef7;
+  background-color: #a8c3ff;
+  min-height: 100vh;
+  min-width: 70vw;
+  margin-bottom: 16px;
 }
 
 .table-container {
-  width: 100%;
-  background: white;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.15);
+  size: 1px;
 }
 
-.n-table th {
-  background-color: #bed0f8;
-  text-align: center;
-  font-weight: bold;
-}
-
-.n-table td {
-  padding: 12px;
-  text-align: center;
-}
-
-.info-text {
-  margin-top: 10px;
-  font-size: 0.9rem;
-  color: #4a4a32;
-  text-align: center;
-}
 </style>
