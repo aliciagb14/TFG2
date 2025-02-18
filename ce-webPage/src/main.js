@@ -6,7 +6,5 @@ import router from './router/router.js';
 
 const app = createApp(App);
 
-app.use(router); // Usa el router en la aplicación
+app.use(router);
 app.mount('#app');
-
-//createApp(App).mount('#app')
