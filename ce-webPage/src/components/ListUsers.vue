@@ -1,6 +1,5 @@
 <template>
     <div>
-        <h2>Bienvenido, {{ username }}</h2>
         <h3>Lista de Usuarios</h3>
         <n-data-table v-if="isAdmin && !loading" :columns="columns" :data="data" bordered />
         <p v-else>No tienes permisos para ver esta información.</p>

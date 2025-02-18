@@ -1,29 +1,34 @@
+<!-- Definir todas las rutas
+<template>
+  <Login>
+    <Home>
+      <Profile></Profile>
+      <Files></Files>
+      <Settings></Settings>
+    </Home>
+  </Login>
+</template>
+
 <script setup>
-import Login from './components/Login.vue';
+import Login from "./views/Login.vue";
+import Home from "./views/Home.vue";
+import Profile from "./views/Profile.vue";
+import Files from "./views/Files.vue";
+import Settings from "./views/Settings.vue";
 </script>
 
+<style></style> -->
 
-<!-- Definir todas las rutas -->
 <template>
-  <div>
-    <nav>
-      <ul>
-        <li><router-link to="/">Login</router-link></li>
-        <li><router-link to="/home">Home</router-link></li>
-      </ul>
-    </nav>
-    <router-view />
+  <div id="app">
+    <router-view></router-view><!-- Renderiza la vista actual según la ruta -->
   </div>
 </template>
 
+<script setup>
+
+</script>
 
 <style>
-nav ul {
-  display: flex;
-  list-style: none;
-  padding: 0;
-}
-nav ul li {
-  margin-right: 10px;
-}
+/* Agrega estilos generales si lo necesitas */
 </style>
