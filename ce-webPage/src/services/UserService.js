@@ -1,6 +1,8 @@
 import axios from 'axios';
 import keycloak, { initKeycloak } from '../../keycloak'
 
+const KEYCLOAK_URL = 'http://localhost:8080/admin/realms/ComercioElectronico/users'
+
 export const getUsers = async () => {
     try {
         if (!keycloak.authenticated) {
@@ -10,11 +12,11 @@ export const getUsers = async () => {
     
         const config = {
             headers: {
-            Authorization: `Bearer ${token}`,  // Authorization con el token de Keycloak
+            Authorization: `Bearer ${token}`,
             }
         };
     
-        const response = await axios.get('http://localhost:8080/admin/realms/ComercioElectronico/users', config);
+        const response = await axios.get(KEYCLOAK_URL, config);
         return response.data.map(user => ({
             id: user.id,
             firstName: user.firstName,
@@ -28,16 +30,27 @@ export const getUsers = async () => {
     }
 };
 
-export async function createUser(user) {
-    await axios.post(`${API_URL}/users`, {
-      firstName: user.firstName,
-      lastName: user.lastName,
-      email: user.email,
-      credentials: [{ type: "password", value: user.password, temporary: false }]
-    }, {
-      headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
-    });
-}
+export const createUser = async (user) => {
+    try {
+        const config = {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            }
+        };
+        const response = await axios.post(KEYCLOAK_URL, {
+            username: user.email,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            email: user.email,
+            enabled: true,
+        })
+  
+      return response.data;
+    } catch (error) {
+      console.error("Error al registrar usuario en Keycloak:", error);
+      throw error;
+    }
+  };
 
 export const deleteUserService = async (id) => {
     try {
@@ -51,7 +64,7 @@ export const deleteUserService = async (id) => {
                 Authorization: `Bearer ${token}`,
             }
         };
-        const response = await axios.delete(`http://localhost:8080/admin/realms/ComercioElectronico/users/${id}`, config)
+        const response = await axios.delete(`KEYCLOAK_URL/${id}`, config)
         
         console.log(`Usuario con ID ${id} eliminado exitosamente de Keycloak.`);
         return response.data;

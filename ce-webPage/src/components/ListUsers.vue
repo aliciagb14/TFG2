@@ -19,6 +19,12 @@
           <n-data-table v-if="isAdmin && !loading" :columns="columns" :data="data" bordered />
           <p v-else>No tienes permisos para ver esta información.</p>
         </div>
+
+        <DeleteUserModal 
+          v-model:show="showDeleteModal"
+          :user="userToDelete"
+          @deleteUser="handleDeleteUser"
+        />
     </n-grid-item>
   </n-grid>
 </template>
@@ -29,17 +35,22 @@ import { NDataTable, NGrid, NGridItem, NIcon, NButton } from 'naive-ui';
 import { getUsers, deleteUserService } from '@/services/UserService';
 import { PersonAddSharp as AddUserIcon, CloseCircleOutline as DeleteUserIcon} from '@vicons/ionicons5';
 import AddUserModal from '@/components/AddUserModal.vue'
+import DeleteUserModal from '@/components/DeleteUserModal.vue';
 import Sidebar from '@/utils/Sidebar.vue';
 
 const data = ref([]);
 const loading = ref(true)
 const showModal = ref(false);
-const isAuthenticated = ref(false);
+const showDeleteModal = ref(false);
+const userToDelete = ref(null); // Usuario seleccionado para eliminar
+
 
 onMounted(async () => {
     console.log('isAdmin:', props.isAdmin);
     if (props.isAdmin) {
         await fetchUsers();
+    } else {
+        console.warn('Acceso restringido. Solo los administradores pueden ver la lista de usuarios.');
     }
 });
 
@@ -57,6 +68,10 @@ const columns = [
       key: 'email',
     },
     {
+      title: 'Rol',
+      key: 'rol',
+    },
+    {
       title: 'Acciones',
       key: 'acciones',
       render: (row) => h(
@@ -64,7 +79,7 @@ const columns = [
         {
           size: 'small',
           type: 'error',
-          onClick: () => deleteUser(row.id),
+          onClick: () => deleteUser(row),
         },
         {
           default: () => h(NIcon, () => h(DeleteUserIcon) )
@@ -78,25 +93,30 @@ const props = defineProps({
   isAdmin: Boolean
 })
 
-const deleteUser = async (userId) => {
-    if (!confirm(`¿Estás seguro de que deseas eliminar este usuario?`)) {
-        return;
-    }
-    try {
-        await deleteUserService(userId);
+const deleteUser = (user) => {
+  userToDelete.value = user
+  showDeleteModal.value = true
+}
 
-        data.value = data.value.filter(user => user.id !== userId);
+const handleDeleteUser = async (user) => {
+  if (!user) { // || !user.id
+    console.error("Error: No se pudo eliminar el usuario porque no tiene un ID válido.");
+    return;
+  }
+  try {
+    //await deleteUserService(user.id);
 
-        console.log(`Usuario con ID ${userId} eliminado de la tabla.`);
-    } catch (error) {
-        console.error('Error al eliminar usuario:', error);
-    }
+    data.value = data.value.filter((u) => u.id !== user.id);
+    
+    await fetchUsers();
+    console.log(`Usuario ${user.firstName} eliminado.`);
+  } catch (error) {
+    console.error('Error al eliminar usuario:', error);
+  }
 };
 
-
-
 const isValidEmail = (email) => {
-    const regex = /^[a-zA-Z0-9._%+-]+@alumnos\.upm\.es$/;
+    const regex = /^[a-zA-Z0-9._%+-]+@(alumnos\.upm\.es|upm\.es)$/;
     return regex.test(email);
 };
 
@@ -110,6 +130,7 @@ const fetchUsers = async () => {
         firstName: user.firstName,  //muy importante que aqui se llame igual lo que printeo a lo que busco en la respuesta de mi console.log(users)
         lastName: user.lastName, 
         email: user.email,
+        rol: getRol(user),
       }));
     } else {
       console.error("La respuesta no es un array de usuarios");
@@ -121,9 +142,25 @@ const fetchUsers = async () => {
   }
 };
 
+const getRol = (newUser) => {
+  if (!isValidEmail(newUser.email)) {
+        newUser.email = ""; 
+        return "";
+    }
+    return newUser.email.endsWith("@alumnos.upm.es") ? "Usuario" : "Profesor";
+}
+
 const handleUserAdded = (newUser) => {
-  data.value.push(newUser);
+  console.log('Usuario agregado:', newUser);
+  
+  data.value.push({
+    firstName: newUser.firstName,
+    lastName: newUser.lastName,
+    email: newUser.email,
+    rol: getRol(newUser),
+  });
 };
+
 
 watch(showModal, (newVal) => {
   console.log('showModal cambio a: ', newVal);
@@ -133,11 +170,11 @@ watch(showModal, (newVal) => {
 
 <style scoped>
 .sidebar-menu {
-  background-color: #2e3d4d; /* Color de fondo para diferenciar el sidebar */
+  background-color: #2e3d4d;
   min-width: 10vw;
   margin:0;
-  min-height: 100vh; /* Hace que el sidebar ocupe toda la altura de la pantalla */
-  border-right: 1px solid #240b0b; /* Línea divisoria con el contenido principal */
+  min-height: 100vh;
+  border-right: 1px solid #240b0b;
 }
 
 .header {
