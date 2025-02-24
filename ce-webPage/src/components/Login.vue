@@ -6,7 +6,7 @@
             <div>
                 <n-space vertical class="input-container">
                     <n-input v-model:value="username" type="text" placeholder="Username" clearable  />
-                    <n-input v-model:value="password" type="password" placeholder="Password" show-password-on="click"/>
+                    <n-input v-model:value="password" type="password" placeholder="Password" show-password-on="click" clearable/>
                 </n-space>
                 <div class="button-container">
                     <n-button type="success" ghost @click="handleLogin" >Login</n-button>
@@ -17,7 +17,7 @@
             </div>
         </div>
     </div>
-    <ListUsers v-if="isauthenticated" :username="authenticatedUser" :isAdmin="isAdmin"/>
+    <ListUsers v-if="isauthenticated && isAdmin" :username="authenticatedUser" :isAdmin="isAdmin"/>
 </template>
   
 <script setup>
@@ -56,7 +56,14 @@ const handleLogin = async () => {
     if (response && keycloak.token) {
         console.log('Token received:', keycloak.token);
         const tokenParsed = keycloak.tokenParsed;
+        const email = tokenParsed?.email || '';
+        console.log(email)
         authenticatedUser.value = tokenParsed?.preferred_username || 'Usuario';
+        if (email.endsWith('@upm.es')) {
+            isAdmin.value = true
+        } else {
+            isAdmin.value = false
+        }
         isauthenticated.value = true;
         console.log('Authenticated with {username + password}');
     }

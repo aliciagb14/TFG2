@@ -26,25 +26,7 @@
   };
   </script>
   
-  <style scoped>
-.sidebar {
-  width: 20%;
-  height: 100vh;
-  background-color: #182a3d;
-  color: white;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  transition: width 0.3s ease-in-out;
-}
-
-/* Sidebar cerrado */
-.sidebar.collapsed {
-  width: 0;
-  overflow: hidden;
-}
-
-/* Botón de toggle */
+<style scoped>
 .toggle-button {
   position: absolute;
   top: 20px;
@@ -55,6 +37,13 @@
 /* Menú */
 .menu {
   margin-top: 80px;
+  height: 100vh;
+  background-color: #182a3d;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  list-style: none;
+  transition: width 0.3s ease-in-out;
 }
 
 .menu ul {
