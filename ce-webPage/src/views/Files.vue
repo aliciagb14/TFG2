@@ -1,7 +1,4 @@
 <template>
-  <h1>Files</h1>
-  <Sidebar></Sidebar>
-  <ListUsers>{{ username }}</ListUsers>
   <div class="content">
     <router-view></router-view>
   </div>

@@ -1,38 +1,38 @@
 <template>
-    <n-modal 
+  <n-modal 
     v-model:show="props.show" 
     :mask-closable="false"
     preset="dialog"
     positive-text="Confirm"
     negative-text="Cancel"
-    @positive-click="closeModal"
+    @positive-click="onPositiveClick"
     @negative-click="closeModal"
+  >
+    <n-card 
+      title="Añadir Usuario"
+      style="width: 400px;"
+      :bordered="false"
     >
-      <n-card 
-        title="Añadir Usuario"
-        style="width: 400px;"
-        :bordered="false"
-      >
-        <n-form ref="formRef" :model="newUser" label-placement="top">
-          <n-form-item label="Nombre" >
-            <n-input v-model:value="newUser.firstName" placeholder="Nombre" />
-          </n-form-item>
+    <n-form ref="formRef" v-model:value="newUser" label-placement="top">
+        <n-form-item label="Nombre" >
+          <n-input v-model:value="newUser.firstName" placeholder="Nombre" />
+        </n-form-item>
           
-          <n-form-item label="Apellidos">
-            <n-input v-model:value="newUser.lastName" placeholder="Apellidos" />
-          </n-form-item>
+        <n-form-item label="Apellidos">
+          <n-input v-model:value="newUser.lastName" placeholder="Apellidos" />
+        </n-form-item>
   
-          <n-form-item label="Correo Electrónico">
-            <n-input v-model:value="newUser.email" placeholder="user@alumnos.upm.es" />
-          </n-form-item>
+        <n-form-item label="Correo Electrónico">
+          <n-input v-model:value="newUser.email" placeholder="user@alumnos.upm.es" />
+        </n-form-item>
   
-          <n-form-item label="Contraseña">
-            <n-input v-model:value="newUser.password" type="password" placeholder="Ingrese la contraseña" />
-          </n-form-item>
-        </n-form>
+        <n-form-item label="Contraseña">
+          <n-input v-model:value="newUser.password" type="password" placeholder="Ingrese la contraseña" />
+        </n-form-item>
+      </n-form>
       </n-card>
-    </n-modal>
-  </template>
+  </n-modal>
+</template>
   
 <script setup>
   import { ref, computed } from 'vue';
@@ -54,6 +54,7 @@
   });
 
   const onPositiveClick = () => {
+    addUser();
     closeModal();
   };
 
@@ -62,7 +63,12 @@
   };
 
   const closeModal = () => {
-    emit('update:show', false);
+    console.log(
+    "Nombre:", newUser.value.firstName, 
+    "Apellidos: ", newUser.value.lastName, 
+    "Mail:" , newUser.value.email , 
+    "Password:", newUser.value.password)
+    emit('update:show', false); 
   };
 
   const isFormValid = computed(() => {
@@ -70,28 +76,22 @@
   });
   
   const addUser = async () => {
-    if (!isFormValid.value) {
-      alert('Por favor, complete todos los campos.');
-      return;
-    }
-    try {
-      if (!newUser.value.firstName || !newUser.value.lastName || !newUser.value.email || !newUser.value.password) {
-        alert('Por favor, complete todos los campos');
-        return;
-      }
-      await createUser(newUser.value);
-      emit('userAdded', {
-        firstName: newUser.value.firstName,
-        lastName: newUser.value.lastName,
-        email: newUser.value.email,
-      });
-      closeModal();
-      newUser.value = { firstName: '', lastName: '', email: '', password: '' };
-       
-    } catch (error) {
-      console.error('Error al agregar usuario:', error);
-    }
-  };
+  if (!isFormValid.value) {
+    alert('Por favor, complete todos los campos.');
+    return;
+  }
+
+  try {
+    //await createUser(newUser.value);
+    emit('userAdded', { ...newUser.value });
+    closeModal();
+
+    newUser.value = { firstName: '', lastName: '', email: '', password: '' };
+  } catch (error) {
+    console.error('Error al agregar usuario:', error);
+  }
+};
+
 </script>
 
 <style scoped>

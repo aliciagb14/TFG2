@@ -2,8 +2,7 @@
   <div class="container">
     <Sidebar></Sidebar>
     <h1>Comercio Electrónico</h1>
-    <h2>Bienvenido, {{ username }}</h2>
-    <ListUsers></ListUsers>
+    <Login/>
     <div class="content">
       <router-view></router-view>
     </div>
@@ -12,7 +11,7 @@
 
 <script setup>
 import Sidebar from "@/components/Sidebar.vue";
-import ListUsers from "@/components/ListUsers.vue";
+import Login from "@/components/Login.vue";
 </script>
 
 <style scoped>

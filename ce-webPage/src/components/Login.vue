@@ -1,5 +1,4 @@
 <template>
-    <!-- <div > -->
     <div class="Login-container" v-if="!isauthenticated">
         <div class="form-container">
             <h1>Gestión de Tiendas</h1>
