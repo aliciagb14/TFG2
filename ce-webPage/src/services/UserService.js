@@ -33,6 +33,10 @@ export async function createUserKeycloak(user) {
     if (!user.username) {
         user.username = (user.firstName + user.lastName).replace(/\s+/g, '').toLowerCase();
     }
+    if (user.username.length < 3 || user.username.length > 30) {
+        console.error('Error: El username debe tener entre 3 y 30 caracteres.');
+        return;
+    }
     const token = keycloak.token;
 
     if (!token) {
@@ -50,6 +54,7 @@ export async function createUserKeycloak(user) {
             firstName: user.firstName,
             lastName: user.lastName,
             email: user.email,
+            id: user.id,
             username: user.username,
             credentials: [{
                 type: "password",
