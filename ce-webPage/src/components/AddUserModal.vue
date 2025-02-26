@@ -1,36 +1,41 @@
 <template>
-  <n-modal 
-    :show="props.show" 
-    :mask-closable="false"
-    positive-text="Confirm"
-    negative-text="Cancel"
-    @positive-click="onPositiveClick"
-    @negative-click="closeModal"
-  >
+  <n-modal :show="props.show" :mask-closable="false">
     <n-card 
       title="Añadir Usuario"
       style="width: 400px;"
       :bordered="false"
     >
       <n-form ref="formRef" v-model:value="newUser" label-placement="top">
-          <n-form-item label="Nombre" >
-            <n-input v-model:value="newUser.firstName" placeholder="Nombre" />
+          <n-form-item label="Nombre" 
+            :feedback="errors.firstName" 
+            :validation-status="errors.firstName ? 'error' : (newUser.firstName ? 'success' : '')"
+            >
+            <n-input v-model:value="newUser.firstName" placeholder="Nombre" @input="isFormValid"/>
           </n-form-item>
             
-          <n-form-item label="Apellidos">
-            <n-input v-model:value="newUser.lastName" placeholder="Apellidos" />
+          <n-form-item label="Apellidos" 
+            :feedback="errors.lastName" 
+            :validation-status="errors.lastName ? 'error' : (newUser.lastName ? 'success' : '')"
+            >
+            <n-input v-model:value="newUser.lastName" placeholder="Apellidos" @input="isFormValid"/>
           </n-form-item>
     
-          <n-form-item label="Correo Electrónico">
-            <n-input v-model:value="newUser.email" placeholder="user@alumnos.upm.es" />
+          <n-form-item label="Correo Electrónico" 
+            :feedback="errors.email" 
+            :validation-status="errors.email ? 'error' : (newUser.email ? 'success' : '')"
+            >
+            <n-input v-model:value="newUser.email" placeholder="user@alumnos.upm.es" @input="isFormValid"/>
           </n-form-item>
     
-          <n-form-item label="Contraseña">
-            <n-input v-model:value="newUser.password" type="password" placeholder="Ingrese la contraseña" />
+          <n-form-item label="Contraseña" 
+            :feedback="errors.password" 
+            :validation-status="errors.password ? 'error' : (newUser.password ? 'success' : '')"
+            >
+            <n-input v-model:value="newUser.password" type="password" placeholder="Ingrese la contraseña" @input="isFormValid" />
           </n-form-item>
         </n-form>
         <div class="botones">
-          <n-button type="success" @click="onPositiveClick" ghost >Crear</n-button>
+          <n-button type="success" @click="onPositiveClick" ghost :disabled="!isFormValid">Crear</n-button>
           <n-button type="error" @click="closeModal" ghost >Cancelar</n-button>
         </div>
     </n-card>
@@ -40,7 +45,6 @@
 <script setup>
   import { ref, computed } from 'vue';
   import { NCard, NButton, NForm, NFormItem, NInput, NIcon, NModal } from 'naive-ui';
-  import {CloseOutline as CloseIcon } from '@vicons/ionicons5'
   import { createUserKeycloak } from '@/services/UserService';
   
   const props = defineProps({
@@ -56,12 +60,23 @@
     password: ''
   });
 
-  const onPositiveClick = () => {
-    addUser();
-    closeModal();
+  const errors = ref({
+    firstName: '',
+    lastName: '',
+    email: '',
+    password: ''
+  });
+
+  const isValidMail = (email) => {
+    return email.endsWith('@alumnos.upm.es');
   };
 
-  const onNegativeClick = () => {
+  const isValidPassword = (password) => {
+    return /^(?=.*[A-Z])(?=.*[\W_]).{8,}$/.test(password);
+  };
+
+  const onPositiveClick = () => {
+    addUser();
     closeModal();
   };
 
@@ -75,8 +90,27 @@
   };
 
   const isFormValid = computed(() => {
-    return newUser.value.firstName && newUser.value.lastName && newUser.value.email && newUser.value.password;
+    const validations = [
+      { field: 'firstName', condition: !newUser.value.firstName, message: "El campo nombre no puede estar vacío" },
+      { field: 'lastName', condition: !newUser.value.lastName, message: "El campo apellido no puede estar vacío" },
+      { field: 'email', condition: !isValidMail(newUser.value.email), message: "El mail debe acabar en @alumnos.upm.es" },
+      { field: 'password', condition: !isValidPassword(newUser.value.password) , message: "La contraseña debe tener al menos 8 caracteres, una mayúscula y un carácter especial" }
+    ];
+
+    let valid = true;
+
+    validations.forEach(({ field, condition, message }) => {
+      if (condition) {
+        errors.value[field] = message;
+        valid = false;
+      } else {
+        errors.value[field] = "";
+      }
+    });
+
+    return valid;
   });
+
   
   const addUser = async () => {
   if (!isFormValid.value) {

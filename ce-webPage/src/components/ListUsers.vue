@@ -97,7 +97,7 @@ const deleteUser = (user) => {
 
 const handleDeleteUser = async (user) => {
   console.log("el usertodelete es: ", user)
-  if (!user || !user.id) { 
+  if (!user) { 
     console.error("Error: No se pudo eliminar el usuario porque no tiene un ID válido.");
     return;
   }
