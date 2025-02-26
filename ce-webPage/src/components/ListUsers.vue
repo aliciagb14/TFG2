@@ -20,6 +20,7 @@
         <DeleteUserModal 
           v-model:show="showDeleteModal"
           :user="userToDelete"
+          @update:show="showModal = $event"
           @deleteUser="handleDeleteUser"
         />
     </n-grid-item>
@@ -29,11 +30,10 @@
 <script setup>
 import { ref, onMounted, h, watch } from 'vue';
 import { NDataTable, NGrid, NGridItem, NIcon, NButton } from 'naive-ui';
-import { getUsers, deleteUserService } from '@/services/UserService';
+import { getUsers, deleteUserKeycloak } from '@/services/UserService';
 import { PersonAddSharp as AddUserIcon, CloseCircleOutline as DeleteUserIcon} from '@vicons/ionicons5';
 import AddUserModal from '@/components/AddUserModal.vue'
 import DeleteUserModal from '@/components/DeleteUserModal.vue';
-import Sidebar from '@/components/Sidebar.vue';
 
 const data = ref([]);
 const loading = ref(true)
@@ -96,12 +96,13 @@ const deleteUser = (user) => {
 }
 
 const handleDeleteUser = async (user) => {
-  if (!user) { // || !user.id
+  console.log("el usertodelete es: ", user)
+  if (!user || !user.id) { 
     console.error("Error: No se pudo eliminar el usuario porque no tiene un ID válido.");
     return;
   }
   try {
-    //await deleteUserService(user.id);
+    await deleteUserKeycloak(user.id);
 
     data.value = data.value.filter((u) => u.id !== user.id);
     
@@ -127,6 +128,8 @@ const fetchUsers = async () => {
         firstName: user.firstName,  //muy importante que aqui se llame igual lo que printeo a lo que busco en la respuesta de mi console.log(users)
         lastName: user.lastName, 
         email: user.email,
+        id: user.id,
+        username: user.username,
         rol: getRol(user),
       }));
     } else {

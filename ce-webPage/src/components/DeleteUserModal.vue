@@ -2,10 +2,10 @@
     <n-modal :show="show" :mask-closable="false" @update:show="emit('update:show', false)">
       <n-card title="Eliminar Usuario" style="width: 400px;">
         <p>¿Estás seguro de que deseas eliminar a <strong>{{ user?.firstName }} {{ user?.lastName }}</strong>?</p>
-        <template #footer>
+        <div class="botones">
           <n-button type="error" @click="confirmDelete">Sí, eliminar</n-button>
           <n-button @click="closeModal">Cancelar</n-button>
-        </template>
+        </div>
       </n-card>
     </n-modal>
   </template>
@@ -26,8 +26,13 @@
   };
   
   const confirmDelete = () => {
-    emit('deleteUser', props.user); // Emitir evento con el usuario a eliminar
+    emit('deleteUser', { ...props.user}); // Emitir evento con el usuario a eliminar
     closeModal();
   };
   </script>
-  
+
+<style scoped>
+.botones{
+    margin: 10px;
+}
+</style>

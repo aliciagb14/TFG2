@@ -1,7 +1,6 @@
 <template>
   <div class="container">
     <Sidebar></Sidebar>
-    <h1>Comercio Electrónico</h1>
     <Login/>
     <div class="content">
       <router-view></router-view>

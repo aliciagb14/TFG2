@@ -1,8 +1,7 @@
 <template>
   <n-modal 
-    v-model:show="props.show" 
+    :show="props.show" 
     :mask-closable="false"
-    preset="dialog"
     positive-text="Confirm"
     negative-text="Cancel"
     @positive-click="onPositiveClick"
@@ -13,24 +12,28 @@
       style="width: 400px;"
       :bordered="false"
     >
-    <n-form ref="formRef" v-model:value="newUser" label-placement="top">
-        <n-form-item label="Nombre" >
-          <n-input v-model:value="newUser.firstName" placeholder="Nombre" />
-        </n-form-item>
-          
-        <n-form-item label="Apellidos">
-          <n-input v-model:value="newUser.lastName" placeholder="Apellidos" />
-        </n-form-item>
-  
-        <n-form-item label="Correo Electrónico">
-          <n-input v-model:value="newUser.email" placeholder="user@alumnos.upm.es" />
-        </n-form-item>
-  
-        <n-form-item label="Contraseña">
-          <n-input v-model:value="newUser.password" type="password" placeholder="Ingrese la contraseña" />
-        </n-form-item>
-      </n-form>
-      </n-card>
+      <n-form ref="formRef" v-model:value="newUser" label-placement="top">
+          <n-form-item label="Nombre" >
+            <n-input v-model:value="newUser.firstName" placeholder="Nombre" />
+          </n-form-item>
+            
+          <n-form-item label="Apellidos">
+            <n-input v-model:value="newUser.lastName" placeholder="Apellidos" />
+          </n-form-item>
+    
+          <n-form-item label="Correo Electrónico">
+            <n-input v-model:value="newUser.email" placeholder="user@alumnos.upm.es" />
+          </n-form-item>
+    
+          <n-form-item label="Contraseña">
+            <n-input v-model:value="newUser.password" type="password" placeholder="Ingrese la contraseña" />
+          </n-form-item>
+        </n-form>
+        <div class="botones">
+          <n-button type="success" @click="onPositiveClick" ghost >Crear</n-button>
+          <n-button type="error" @click="closeModal" ghost >Cancelar</n-button>
+        </div>
+    </n-card>
   </n-modal>
 </template>
   
@@ -38,7 +41,7 @@
   import { ref, computed } from 'vue';
   import { NCard, NButton, NForm, NFormItem, NInput, NIcon, NModal } from 'naive-ui';
   import {CloseOutline as CloseIcon } from '@vicons/ionicons5'
-  import { createUser } from '@/services/UserService';
+  import { createUserKeycloak } from '@/services/UserService';
   
   const props = defineProps({
     show: Boolean
@@ -82,7 +85,7 @@
   }
 
   try {
-    //await createUser(newUser.value);
+    await createUserKeycloak(newUser.value);
     emit('userAdded', { ...newUser.value });
     closeModal();
 
@@ -149,5 +152,12 @@
   padding: 20px;
   border-radius: 8px;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+.botones {
+  display: flex;               
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
 }
 </style>
