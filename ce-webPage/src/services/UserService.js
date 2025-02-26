@@ -1,8 +1,6 @@
 import axios from 'axios';
 import keycloak, { initKeycloak } from '../../keycloak'
 
-const KEYCLOAK_URL = 'http://localhost:8080/admin/realms/ComercioElectronico/users'
-
 export const getUsers = async () => {
     try {
         if (!keycloak.authenticated) {
@@ -12,16 +10,17 @@ export const getUsers = async () => {
     
         const config = {
             headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${token}`, 
             }
         };
     
-        const response = await axios.get(KEYCLOAK_URL, config);
+        const response = await axios.get('http://localhost:8080/admin/realms/ComercioElectronico/users', config);
         return response.data.map(user => ({
             id: user.id,
             firstName: user.firstName,
             lastName: user.lastName,
             email: user.email,
+            username: user.username
         }));
 
     } catch (error) {
@@ -30,46 +29,66 @@ export const getUsers = async () => {
     }
 };
 
-export const createUser = async (user) => {
+export async function createUserKeycloak(user) {
+    if (!user.username) {
+        user.username = (user.firstName + user.lastName).replace(/\s+/g, '').toLowerCase();
+    }
+    const token = keycloak.token;
+
+    if (!token) {
+        throw new Error('Token de autenticación no disponible.');
+    }
+
+    const config = {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        }
+    };
+
     try {
-        const config = {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            }
-        };
-        const response = await axios.post(KEYCLOAK_URL, {
-            username: user.email,
+        const response = await axios.post(`http://localhost:8080/admin/realms/ComercioElectronico/users`, {
             firstName: user.firstName,
             lastName: user.lastName,
             email: user.email,
-            enabled: true,
-        })
-  
-      return response.data;
-    } catch (error) {
-      console.error("Error al registrar usuario en Keycloak:", error);
-      throw error;
-    }
-  };
+            username: user.username,
+            credentials: [{
+                type: "password",
+                value: user.password,
+                temporary: false
+            }],
+            enabled: true
+        }, config);
 
-export const deleteUserService = async (id) => {
-    try {
-        if (!keycloak.authenticated) {
-            throw new Error("No estás autenticado en Keycloak.");
-        }
-        const token = keycloak.token;
-
-        const config = {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            }
-        };
-        const response = await axios.delete(`KEYCLOAK_URL/${id}`, config)
-        
-        console.log(`Usuario con ID ${id} eliminado exitosamente de Keycloak.`);
+        console.log("Usuario creado con éxito:", response.data);
         return response.data;
     } catch (error) {
-        console.error(`Error al eliminar usuario con ID ${id} de Keycloak:`, error);
-        throw error;
+        console.error('Error al crear el usuario:', error.response ? error.response.data : error);
     }
-};
+}
+
+export async function deleteUserKeycloak(userId) {
+    const token = keycloak.token;
+
+    if (!token) {
+        throw new Error('Token de autenticación no disponible.');
+    }
+
+    const config = {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        }
+    };
+
+    try {
+        if (!userId) {
+            throw new Error('Usuario no encontrado.');
+        }
+
+        const response = await axios.delete(`http://localhost:8080/admin/realms/ComercioElectronico/users/${userId}`, config);
+
+        console.log("Usuario eliminado con éxito:", response.data);
+        return response.data;
+    } catch (error) {
+        console.error('Error al eliminar el usuario:', error.response ? error.response.data : error.message);
+    }
+}

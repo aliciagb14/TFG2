@@ -1,20 +1,32 @@
 // src/router/router.js
-import { createRouter, createWebHistory } from 'vue-router';
-import Login from '@/components/Login.vue';
-import Home from '@/components/Home.vue';
+import { createRouter, createWebHistory } from "vue-router";
+import Login from "@/views/Login.vue";
+import Home from "@/views/Home.vue";
+import Files from "@/views/Files.vue";
+import Profile from "@/views/Profile.vue";
+import Settings from "@/views/Settings.vue";
 
-
+/*Añadir todas las vistas de la App*/
 const routes = [
-  {
-    path: '/',
-    name: 'Login',
-    component: Login,
+  { path: "/",
+    component: Login
   },
   {
-    path: '/home',
-    name: 'Home',
+    path: "/home",
     component: Home,
+    children: [
+      { path: "files", component: Files },
+    ],
   },
+  {
+    path: "/profile",
+    component: Profile
+  },
+  {
+    path: "/settings",
+    component: Settings
+  }
+
 ];
 
 const router = createRouter({

@@ -1,5 +1,10 @@
 <template>
-    <main class="home-page">
-        <h1> Esta es la pagina FIles.vue</h1>
-    </main>
+  <div class="content">
+    <router-view></router-view>
+  </div>
 </template>
+
+<script setup>
+</script>
+
+<style></style>
