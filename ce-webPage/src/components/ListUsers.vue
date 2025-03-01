@@ -31,7 +31,7 @@
 import { ref, onMounted, h, watch } from 'vue';
 import { NDataTable, NGrid, NGridItem, NIcon, NButton } from 'naive-ui';
 import { getUsers, deleteUserKeycloak } from '@/services/UserService';
-import { PersonAddSharp as AddUserIcon, CloseCircleOutline as DeleteUserIcon} from '@vicons/ionicons5';
+import { PersonAddSharp as AddUserIcon, CloseCircleOutline as DeleteUserIcon, CreateOutline as EditUserIcon} from '@vicons/ionicons5';
 import AddUserModal from '@/components/AddUserModal.vue'
 import DeleteUserModal from '@/components/DeleteUserModal.vue';
 
@@ -71,17 +71,30 @@ const columns = [
     {
       title: 'Acciones',
       key: 'acciones',
-      render: (row) => h(
-        NButton,
-        {
-          size: 'small',
-          type: 'error',
-          onClick: () => deleteUser(row),
-        },
-        {
-          default: () => h(NIcon, () => h(DeleteUserIcon) )
-        }
-      )
+      render: (row) => h('div', { style: 'display: flex; gap: 8px;' }, [
+        h(
+          NButton,
+          {
+            size: 'small',
+            type: 'warning',
+            onClick: () => editUser(row),
+          },
+          {
+            default: () => h(NIcon, () => h(EditUserIcon))
+          }
+        ),
+        h(
+          NButton,
+          {
+            size: 'small',
+            type: 'error',
+            onClick: () => deleteUser(row),
+          },
+          {
+            default: () => h(NIcon, () => h(DeleteUserIcon))
+          }
+        )
+      ])
     }
 ];
 

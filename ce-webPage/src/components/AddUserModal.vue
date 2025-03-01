@@ -35,8 +35,8 @@
           </n-form-item>
         </n-form>
         <div class="botones">
-          <n-button type="success" @click="onPositiveClick" ghost :disabled="!isFormValid">Crear</n-button>
           <n-button type="error" @click="closeModal" ghost >Cancelar</n-button>
+          <n-button type="primary" ghost @click="onPositiveClick"  :disabled="!isFormValid">Crear</n-button>
         </div>
     </n-card>
   </n-modal>

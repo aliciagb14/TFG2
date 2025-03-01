@@ -3,7 +3,7 @@
       <n-card title="Eliminar Usuario" style="width: 400px;">
         <p>¿Estás seguro de que deseas eliminar a <strong>{{ user?.firstName }} {{ user?.lastName }}</strong>?</p>
         <div class="botones">
-          <n-button type="error" @click="confirmDelete">Sí, eliminar</n-button>
+          <n-button type="error" @click="confirmDelete">Eliminar</n-button>
           <n-button @click="closeModal">Cancelar</n-button>
         </div>
       </n-card>
