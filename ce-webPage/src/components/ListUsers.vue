@@ -17,6 +17,12 @@
           <p v-else>No tienes permisos para ver esta información.</p>
         </div>
 
+        <EditUserModal
+          v-model:show="showEditModal"
+          :user="userToEdit"
+          @update:show="showModal = $event"
+          @editUser="handleEditUser"
+        />
         <DeleteUserModal 
           v-model:show="showDeleteModal"
           :user="userToDelete"
@@ -29,17 +35,20 @@
 
 <script setup>
 import { ref, onMounted, h, watch } from 'vue';
-import { NDataTable, NGrid, NGridItem, NIcon, NButton } from 'naive-ui';
+import { NDataTable, NGrid, NGridItem, NIcon, NButton, NDatePicker } from 'naive-ui';
 import { getUsers, deleteUserKeycloak } from '@/services/UserService';
 import { PersonAddSharp as AddUserIcon, CloseCircleOutline as DeleteUserIcon, CreateOutline as EditUserIcon} from '@vicons/ionicons5';
 import AddUserModal from '@/components/AddUserModal.vue'
+import EditUserModal from '@/components/EditUserModal.vue'
 import DeleteUserModal from '@/components/DeleteUserModal.vue';
 
 const data = ref([]);
 const loading = ref(true)
 const showModal = ref(false);
 const showDeleteModal = ref(false);
-const userToDelete = ref(null); // Usuario seleccionado para eliminar
+const showEditModal = ref(false)
+const userToDelete = ref(null);
+const userToEdit = ref(null);
 
 
 onMounted(async () => {
@@ -67,6 +76,10 @@ const columns = [
     {
       title: 'Rol',
       key: 'rol',
+    },
+    {
+      title: 'Año académico',
+      key: 'añoAcademico',
     },
     {
       title: 'Acciones',
@@ -108,6 +121,15 @@ const deleteUser = (user) => {
   showDeleteModal.value = true
 }
 
+const editUser = (user)=> {
+  userToEdit.value = user
+  showEditModal.value = true
+}
+
+const getActualYear = () => {
+  return new Date().getFullYear();
+};
+
 const handleDeleteUser = async (user) => {
   console.log("el usertodelete es: ", user)
   if (!user) { 
@@ -144,6 +166,7 @@ const fetchUsers = async () => {
         id: user.id,
         username: user.username,
         rol: getRol(user),
+        añoAcademico: getActualYear()
       }));
     } else {
       console.error("La respuesta no es un array de usuarios");

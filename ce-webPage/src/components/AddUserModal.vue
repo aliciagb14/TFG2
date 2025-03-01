@@ -5,6 +5,7 @@
       style="width: 400px;"
       :bordered="false"
     >
+    <!-- <FormUser v-model:value="newUser" :errors="errors"/> -->
       <n-form ref="formRef" v-model:value="newUser" label-placement="top">
           <n-form-item label="Nombre" 
             :feedback="errors.firstName" 
@@ -46,6 +47,7 @@
   import { ref, computed } from 'vue';
   import { NCard, NButton, NForm, NFormItem, NInput, NIcon, NModal } from 'naive-ui';
   import { createUserKeycloak } from '@/services/UserService';
+ // import FormUser from '@/components/FormUser.vue'
   
   const props = defineProps({
     show: Boolean
