@@ -97,3 +97,38 @@ export async function deleteUserKeycloak(userId) {
         console.error('Error al eliminar el usuario:', error.response ? error.response.data : error.message);
     }
 }
+
+export async function updateUserKeycloak(user) {
+    const token = keycloak.token;
+
+    if (!token) {
+        throw new Error('Token de autenticación no disponible.');
+    }
+
+    if (!user.id) {
+        throw new Error('El usuario no tiene un ID válido.');
+    }
+
+    const config = {
+        headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json'
+        }
+    };
+
+    try {
+        const response = await axios.put(`http://localhost:8080/admin/realms/ComercioElectronico/users/${user.id}`, {
+            firstName: user.firstName,
+            lastName: user.lastName,
+            email: user.email,
+            username: user.username,
+            enabled: true
+        }, config);
+
+        console.log("Usuario actualizado con éxito", response.data);
+        return response.data;
+    } catch (error) {
+        console.error('Error al actualizar el usuario:', error.response ? error.response.data : error.message);
+        throw error;
+    }
+}

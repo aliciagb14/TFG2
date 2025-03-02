@@ -17,6 +17,12 @@
           <p v-else>No tienes permisos para ver esta información.</p>
         </div>
 
+        <EditUserModal
+          v-model:show="showEditModal"
+          :user="userToEdit"
+          @update:show="showModal = $event"
+          @editUser="handleEditUser"
+        />
         <DeleteUserModal 
           v-model:show="showDeleteModal"
           :user="userToDelete"
@@ -29,17 +35,20 @@
 
 <script setup>
 import { ref, onMounted, h, watch } from 'vue';
-import { NDataTable, NGrid, NGridItem, NIcon, NButton } from 'naive-ui';
+import { NDataTable, NGrid, NGridItem, NIcon, NButton, NDatePicker } from 'naive-ui';
 import { getUsers, deleteUserKeycloak } from '@/services/UserService';
-import { PersonAddSharp as AddUserIcon, CloseCircleOutline as DeleteUserIcon} from '@vicons/ionicons5';
+import { PersonAddSharp as AddUserIcon, CloseCircleOutline as DeleteUserIcon, CreateOutline as EditUserIcon} from '@vicons/ionicons5';
 import AddUserModal from '@/components/AddUserModal.vue'
+import EditUserModal from '@/components/EditUserModal.vue'
 import DeleteUserModal from '@/components/DeleteUserModal.vue';
 
 const data = ref([]);
 const loading = ref(true)
 const showModal = ref(false);
 const showDeleteModal = ref(false);
-const userToDelete = ref(null); // Usuario seleccionado para eliminar
+const showEditModal = ref(false)
+const userToDelete = ref(null);
+const userToEdit = ref(null);
 
 
 onMounted(async () => {
@@ -69,19 +78,36 @@ const columns = [
       key: 'rol',
     },
     {
+      title: 'Año académico',
+      key: 'añoAcademico',
+    },
+    {
       title: 'Acciones',
       key: 'acciones',
-      render: (row) => h(
-        NButton,
-        {
-          size: 'small',
-          type: 'error',
-          onClick: () => deleteUser(row),
-        },
-        {
-          default: () => h(NIcon, () => h(DeleteUserIcon) )
-        }
-      )
+      render: (row) => h('div', { style: 'display: flex; gap: 8px;' }, [
+        h(
+          NButton,
+          {
+            size: 'small',
+            type: 'warning',
+            onClick: () => editUser(row),
+          },
+          {
+            default: () => h(NIcon, () => h(EditUserIcon))
+          }
+        ),
+        h(
+          NButton,
+          {
+            size: 'small',
+            type: 'error',
+            onClick: () => deleteUser(row),
+          },
+          {
+            default: () => h(NIcon, () => h(DeleteUserIcon))
+          }
+        )
+      ])
     }
 ];
 
@@ -94,6 +120,15 @@ const deleteUser = (user) => {
   userToDelete.value = user
   showDeleteModal.value = true
 }
+
+const editUser = (user)=> {
+  userToEdit.value = user
+  showEditModal.value = true
+}
+
+const getActualYear = () => {
+  return new Date().getFullYear();
+};
 
 const handleDeleteUser = async (user) => {
   console.log("el usertodelete es: ", user)
@@ -113,6 +148,27 @@ const handleDeleteUser = async (user) => {
   }
 };
 
+const handleEditUser = async (updatedUser) => {
+  console.log("el usertoedit es: ", updatedUser)
+
+  if (!updatedUser) {
+    console.error("Error: No se pudo actualizar el usuario porque no tiene un ID válido.");
+    return;
+  }
+
+  try {
+    const index = data.value.findIndex(user => user.id === updatedUser.id);
+    if (index !== -1) {
+      data.value[index] = { ...updatedUser };
+    }
+
+    showEditModal.value = false;
+    console.log(`Usuario ${updatedUser.firstName} actualizado correctamente.`);
+  } catch (error) {
+    console.error("Error al actualizar usuario:", error);
+  }
+}
+
 const isValidEmail = (email) => {
     const regex = /^[a-zA-Z0-9._%+-]+@(alumnos\.upm\.es|upm\.es)$/;
     return regex.test(email);
@@ -131,6 +187,7 @@ const fetchUsers = async () => {
         id: user.id,
         username: user.username,
         rol: getRol(user),
+        añoAcademico: getActualYear()
       }));
     } else {
       console.error("La respuesta no es un array de usuarios");
