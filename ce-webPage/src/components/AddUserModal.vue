@@ -5,40 +5,11 @@
       style="width: 400px;"
       :bordered="false"
     >
-    <!-- <FormUser v-model:value="newUser" :errors="errors"/> -->
-      <n-form ref="formRef" v-model:value="newUser" label-placement="top">
-          <n-form-item label="Nombre" 
-            :feedback="errors.firstName" 
-            :validation-status="errors.firstName ? 'error' : (newUser.firstName ? 'success' : '')"
-            >
-            <n-input v-model:value="newUser.firstName" placeholder="Nombre" @input="isFormValid"/>
-          </n-form-item>
-            
-          <n-form-item label="Apellidos" 
-            :feedback="errors.lastName" 
-            :validation-status="errors.lastName ? 'error' : (newUser.lastName ? 'success' : '')"
-            >
-            <n-input v-model:value="newUser.lastName" placeholder="Apellidos" @input="isFormValid"/>
-          </n-form-item>
-    
-          <n-form-item label="Correo Electrónico" 
-            :feedback="errors.email" 
-            :validation-status="errors.email ? 'error' : (newUser.email ? 'success' : '')"
-            >
-            <n-input v-model:value="newUser.email" placeholder="user@alumnos.upm.es" @input="isFormValid"/>
-          </n-form-item>
-    
-          <n-form-item label="Contraseña" 
-            :feedback="errors.password" 
-            :validation-status="errors.password ? 'error' : (newUser.password ? 'success' : '')"
-            >
-            <n-input v-model:value="newUser.password" type="password" placeholder="Ingrese la contraseña" @input="isFormValid" />
-          </n-form-item>
-        </n-form>
-        <div class="botones">
-          <n-button type="error" @click="closeModal" ghost >Cancelar</n-button>
-          <n-button type="primary" ghost @click="onPositiveClick"  :disabled="!isFormValid">Crear</n-button>
-        </div>
+    <FormUser :user="newUser" :errors="errors" @validate="isFormValid" />
+    <div class="botones">
+      <n-button type="error" @click="closeModal" ghost >Cancelar</n-button>
+      <n-button type="primary" ghost @click="onPositiveClick"  :disabled="!isFormValid">Crear</n-button>
+    </div>
     </n-card>
   </n-modal>
 </template>
@@ -47,7 +18,7 @@
   import { ref, computed } from 'vue';
   import { NCard, NButton, NForm, NFormItem, NInput, NIcon, NModal } from 'naive-ui';
   import { createUserKeycloak } from '@/services/UserService';
- // import FormUser from '@/components/FormUser.vue'
+  import FormUser from '@/components/FormUser.vue'
   
   const props = defineProps({
     show: Boolean
@@ -68,6 +39,7 @@
     email: '',
     password: ''
   });
+
 
   const isValidMail = (email) => {
     return email.endsWith('@alumnos.upm.es');
@@ -114,7 +86,7 @@
   });
 
   
-  const addUser = async () => {
+const addUser = async () => {
   if (!isFormValid.value) {
     alert('Por favor, complete todos los campos.');
     return;
