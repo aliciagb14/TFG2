@@ -148,6 +148,29 @@ const handleDeleteUser = async (user) => {
   }
 };
 
+const handleEditUser = async (updatedUser) => {
+  console.log("el usertoedit es: ", updatedUser)
+
+  if (!updatedUser) {
+    console.error("Error: No se pudo actualizar el usuario porque no tiene un ID válido.");
+    return;
+  }
+
+  try {
+    //await updateUserKeycloak(user);
+
+    const index = data.value.findIndex(user => user.id === updatedUser.id);
+    if (index !== -1) {
+      data.value[index] = { ...updatedUser };
+    }
+
+    showEditModal.value = false;
+    console.log(`Usuario ${updatedUser.firstName} actualizado correctamente.`);
+  } catch (error) {
+    console.error("Error al actualizar usuario:", error);
+  }
+}
+
 const isValidEmail = (email) => {
     const regex = /^[a-zA-Z0-9._%+-]+@(alumnos\.upm\.es|upm\.es)$/;
     return regex.test(email);

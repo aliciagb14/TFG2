@@ -1,32 +1,70 @@
 <template>
-    <n-modal :show="show" :mask-closable="false" @update:show="emit('update:show', false)">
-      <n-card title="Editar Usuario" style="width: 400px;">
-        <FormUser v-model:value="newUser"/>
-        <div class="botones">
-          <n-button type="info" @click="confirmDelete">Editar</n-button>
-          <n-button @click="closeModal">Cancelar</n-button>
-        </div>
-      </n-card>
-    </n-modal>
-  </template>
-  
-  <script setup>
-  import { defineProps, defineEmits } from 'vue';
-  import {NModal, NCard, NButton} from 'naive-ui'
-  
-  const props = defineProps({
-    show: Boolean,
-    user: Object,
+  <n-modal :show="props.show" :mask-closable="false" >
+    <n-card title="Editar Usuario" style="width: 400px;" :bordered="false">
+      <FormUser :user="user" :errors="errors" />
+
+      <div class="botones">
+        <n-button type="error" @click="closeModal" ghost>Cancelar</n-button>
+        <n-button type="primary" ghost @click="onPositiveClick" :disabled="!isFormValid" >Guardar</n-button>
+      </div>
+    </n-card>
+  </n-modal>
+</template>
+
+<script setup>
+import { ref, computed, watch } from "vue";
+import FormUser from "@/components/FormUser.vue";
+import {NButton, NCard, NModal} from 'naive-ui'
+
+const props = defineProps({ 
+  show: Boolean, 
+  user: Object 
+});
+
+const emit = defineEmits(["update:show", "userUpdated"]);
+
+const userToEdit = ref({ ...props.user });
+const errors = ref({ firstName: "", lastName: "", email: "", password: "" });
+
+const isFormValid = computed(() => {
+    const validations = [
+      { field: 'firstName', condition: !props.user?.firstName, message: "El campo nombre no puede estar vacío" },
+      { field: 'lastName', condition: !props.user?.lastName, message: "El campo apellido no puede estar vacío" },
+      { field: 'email', condition: !(props.user?.email), message: "El mail debe acabar en @alumnos.upm.es" },
+      { field: 'password', condition: !(props.user?.password) , message: "La contraseña debe tener al menos 8 caracteres, una mayúscula y un carácter especial" }
+    ];
+
+    let valid = true;
+
+    validations.forEach(({ field, condition, message }) => {
+      if (condition) {
+        errors.value[field] = message;
+        valid = false;
+      } else {
+        errors.value[field] = "";
+      }
+    });
+
+    return valid;
   });
-  
-  const emit = defineEmits(['update:show', 'deleteUser']);
-  
-  const closeModal = () => {
-    emit('update:show', false);
-  };
-  
-  const confirmDelete = () => {
-    emit('deleteUser', { ...props.user}); // Emitir evento con el usuario a eliminar
+
+const updateUser = async () => {
+  try {
+   // await updateUserKeycloak(editedUser.value);
+    emit("userUpdated", { ...props.user });
+
     closeModal();
-  };
-  </script>
+  } catch (error) {
+    console.error("Error al actualizar usuario:", error);
+  }
+};
+
+const closeModal = () => {
+  emit("update:show", false);
+};
+
+const onPositiveClick = () => {
+  updateUser();
+  closeModal();
+};
+</script>
