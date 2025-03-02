@@ -34,8 +34,8 @@ const isFormValid = computed(() => {
     const validations = [
       { field: 'firstName', condition: !userToEdit.value.firstName, message: "El campo nombre no puede estar vacío" },
       { field: 'lastName', condition: !userToEdit.value.lastName, message: "El campo apellido no puede estar vacío" },
-      { field: 'email', condition: !(userToEdit.value.email), message: "El mail debe acabar en @alumnos.upm.es" },
-      { field: 'password', condition: !(userToEdit.value.password) , message: "La contraseña debe tener al menos 8 caracteres, una mayúscula y un carácter especial" }
+      { field: 'email', condition: !isValidMail(userToEdit.value.email), message: "El mail debe acabar en @alumnos.upm.es" },
+      { field: 'password', condition: !isValidPassword(userToEdit.value.password) , message: "La contraseña debe tener al menos 8 caracteres, una mayúscula y un carácter especial" }
     ];
 
     let valid = true;
@@ -52,9 +52,16 @@ const isFormValid = computed(() => {
     return valid;
   });
 
+  const isValidMail = (email) => {
+    return email.endsWith('@alumnos.upm.es');
+  };
+
+  const isValidPassword = (password) => {
+    return /^(?=.*[A-Z])(?=.*[\W_]).{8,}$/.test(password);
+  };
+
 const updateUser = async () => {
   try {
-    console.log(Array(userToEdit.value))
     await updateUserKeycloak(userToEdit.value);
     emit("userUpdated", { ...userToEdit.value});
 
