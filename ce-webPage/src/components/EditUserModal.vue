@@ -15,7 +15,7 @@
 import { ref, computed, watch } from "vue";
 import FormUser from "@/components/FormUser.vue";
 import {NButton, NCard, NModal} from 'naive-ui'
-
+import { updateUserKeycloak } from '@/services/UserService'
 const props = defineProps({ 
   show: Boolean, 
   user: Object 
@@ -26,12 +26,16 @@ const emit = defineEmits(["update:show", "userUpdated"]);
 const userToEdit = ref({ ...props.user });
 const errors = ref({ firstName: "", lastName: "", email: "", password: "" });
 
+watch(() => props.user, (newUser) => {
+  userToEdit.value = { ...newUser };
+}, { deep: true });
+
 const isFormValid = computed(() => {
     const validations = [
-      { field: 'firstName', condition: !props.user?.firstName, message: "El campo nombre no puede estar vacío" },
-      { field: 'lastName', condition: !props.user?.lastName, message: "El campo apellido no puede estar vacío" },
-      { field: 'email', condition: !(props.user?.email), message: "El mail debe acabar en @alumnos.upm.es" },
-      { field: 'password', condition: !(props.user?.password) , message: "La contraseña debe tener al menos 8 caracteres, una mayúscula y un carácter especial" }
+      { field: 'firstName', condition: !userToEdit.value.firstName, message: "El campo nombre no puede estar vacío" },
+      { field: 'lastName', condition: !userToEdit.value.lastName, message: "El campo apellido no puede estar vacío" },
+      { field: 'email', condition: !(userToEdit.value.email), message: "El mail debe acabar en @alumnos.upm.es" },
+      { field: 'password', condition: !(userToEdit.value.password) , message: "La contraseña debe tener al menos 8 caracteres, una mayúscula y un carácter especial" }
     ];
 
     let valid = true;
@@ -50,10 +54,10 @@ const isFormValid = computed(() => {
 
 const updateUser = async () => {
   try {
-   // await updateUserKeycloak(editedUser.value);
-    emit("userUpdated", { ...props.user });
+    console.log(Array(userToEdit.value))
+    await updateUserKeycloak(userToEdit.value);
+    emit("userUpdated", { ...userToEdit.value});
 
-    closeModal();
   } catch (error) {
     console.error("Error al actualizar usuario:", error);
   }

@@ -157,8 +157,6 @@ const handleEditUser = async (updatedUser) => {
   }
 
   try {
-    //await updateUserKeycloak(user);
-
     const index = data.value.findIndex(user => user.id === updatedUser.id);
     if (index !== -1) {
       data.value[index] = { ...updatedUser };

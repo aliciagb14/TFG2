@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <Sidebar></Sidebar>
-    <Login/>
+    <ListUsers></ListUsers>
     <div class="content">
       <router-view></router-view>
     </div>
@@ -10,7 +10,8 @@
 
 <script setup>
 import Sidebar from "@/components/Sidebar.vue";
-import Login from "@/components/Login.vue";
+import ListUsers from "@/components/ListUsers.vue";
+
 </script>
 
 <style scoped>
