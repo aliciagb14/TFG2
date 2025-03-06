@@ -1,5 +1,6 @@
 <template>
-    <!-- <div > -->
+    <Login/>
+    <!-- <div >
     <div class="Login-container" v-if="!isauthenticated">
         <div class="form-container">
             <h1>Gestión de Tiendas</h1>
@@ -16,11 +17,12 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> -->
 </template>
   
 <script setup>
 import {ref, onMounted, watch} from 'vue'
+import Login  from '@/components/Login.vue'
 import ListUsers from '@/components/ListUsers.vue';
 import { NInput, NButton, NCard, NSpace, NIcon } from 'naive-ui'
 import { LockClosedOutline as ForgotPasswordIcon} from '@vicons/ionicons5';
@@ -48,12 +50,13 @@ const isAdmin = ref(true)
 
 //PRUEBA
 onMounted(() => {
-    initKeycloak(isauthenticated).then(() => {
-        if (keycloak.authenticated) {
-            console.log('Usuario ya autenticado, redirigiendo...');
-            router.push('/home');
-        }
-    });
+    router.push('/home');
+    // initKeycloak(isauthenticated).then(() => {
+    //     if (keycloak.authenticated) {
+    //         console.log('Usuario ya autenticado, redirigiendo...');
+    //         router.push('/home');
+    //     }
+    // });
 });
 
 //PRUEBA

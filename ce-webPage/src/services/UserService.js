@@ -1,31 +1,41 @@
 import axios from 'axios';
-import keycloak, { initKeycloak } from '../../keycloak'
+import keycloak, { getAuthToken } from '../../keycloak'
 
-export const getUsers = async () => {
+export const getUsers = async (token) => {
     try {
-        if (!keycloak.authenticated) {
-            throw new Error("No estás autenticado en Keycloak.");
+        if (!token) {
+            throw new Error("❌ No hay token disponible. Inicia sesión primero.");
         }
-        const token = keycloak.token;
-    
+
+        const tokenDecoded = JSON.parse(atob(token.split('.')[1]));
+        const roles = tokenDecoded.realm_access?.roles || [];
+
+        if (!roles.includes('admin')) {
+            throw new Error("⛔ No tienes permisos para ver la lista de usuarios.");
+        }
+
         const config = {
             headers: {
-            Authorization: `Bearer ${token}`, 
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json'
             }
         };
-    
-        const response = await axios.get('http://localhost:8080/admin/realms/ComercioElectronico/users', config);
+
+        const response = await axios.get(`http://localhost:8080/admin/realms/ComercioElectronico/users`, config);
+        console.log(response)
+        console.log("📜 Lista de usuarios obtenida:", response.data);
+
         return response.data.map(user => ({
             id: user.id,
-            firstName: user.firstName,
-            lastName: user.lastName,
-            email: user.email,
-            username: user.username
+            firstName: user.firstName || '',
+            lastName: user.lastName || '',
+            email: user.email || '',
+            username: user.username || ''
         }));
 
     } catch (error) {
-        console.error('Error al obtener usuarios desde Keycloak:', error);
-        return [];  
+        console.error("❌ Error al obtener usuarios desde Keycloak:", error.response?.data || error.message);
+        return [];
     }
 };
 
@@ -72,22 +82,18 @@ export async function createUserKeycloak(user) {
 }
 
 export async function deleteUserKeycloak(userId) {
-    const token = keycloak.token;
-
-    if (!token) {
-        throw new Error('Token de autenticación no disponible.');
-    }
-
-    const config = {
-        headers: {
-            Authorization: `Bearer ${token}`,
-        }
-    };
-
     try {
         if (!userId) {
             throw new Error('Usuario no encontrado.');
         }
+
+        const token = getAdminToken() //getAuthToken();
+    
+        const config = {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            }
+        };
 
         const response = await axios.delete(`http://localhost:8080/admin/realms/ComercioElectronico/users/${userId}`, config);
 
