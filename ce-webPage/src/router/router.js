@@ -1,22 +1,26 @@
-// src/router/router.js
 import { createRouter, createWebHistory } from "vue-router";
-import Login from "@/views/Login.vue";
+import Login from "@/components/Login.vue";
 import Home from "@/views/Home.vue";
 import Files from "@/views/Files.vue";
 import Profile from "@/views/Profile.vue";
 import Settings from "@/views/Settings.vue";
 
-/*Añadir todas las vistas de la App*/
 const routes = [
-  { path: "/",
+  { 
+    path: "/",
+    redirect: "/login"
+  },
+  { 
+    path: "/login",
     component: Login
   },
   {
     path: "/home",
-    component: Home,
-    children: [
-      { path: "files", component: Files },
-    ],
+    component: Home
+  },
+  {
+    path: '/files',
+    component: Files
   },
   {
     path: "/profile",

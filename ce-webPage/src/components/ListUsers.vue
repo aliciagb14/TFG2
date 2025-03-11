@@ -1,7 +1,8 @@
 <template>
   <n-grid >
+    <Sidebar/>
     <n-grid-item class="header" span="12 m:21">
-        <h2>Bienvenido, {{ username }}</h2>
+        <h2>Bienvenido, {{ props.username }}</h2>
         <div>
           <h2>Users</h2>
           <n-button @click="showModal=!showModal">
@@ -35,13 +36,16 @@
 
 <script setup>
 import { ref, onMounted, h, watch } from 'vue';
+import { useRouter, useRoute } from 'vue-router';
+
 import { NDataTable, NGrid, NGridItem, NIcon, NButton, NDatePicker } from 'naive-ui';
 import { getUsers, deleteUserKeycloak } from '@/services/UserService';
+import  Sidebar  from '@/components/Sidebar.vue';
 import { PersonAddSharp as AddUserIcon, CloseCircleOutline as DeleteUserIcon, CreateOutline as EditUserIcon} from '@vicons/ionicons5';
 import AddUserModal from '@/components/AddUserModal.vue'
 import EditUserModal from '@/components/EditUserModal.vue'
 import DeleteUserModal from '@/components/DeleteUserModal.vue';
-
+import keycloak, {loginWithCredentials} from '../../keycloak';
 const data = ref([]);
 const loading = ref(true)
 const showModal = ref(false);
@@ -49,6 +53,7 @@ const showDeleteModal = ref(false);
 const showEditModal = ref(false)
 const userToDelete = ref(null);
 const userToEdit = ref(null);
+const route = useRoute()
 
 
 onMounted(async () => {
@@ -113,6 +118,7 @@ const columns = [
 
 const props = defineProps({
   username: String,
+  password: String,
   isAdmin: Boolean
 })
 
@@ -138,10 +144,9 @@ const handleDeleteUser = async (user) => {
   }
   try {
     await deleteUserKeycloak(user.id);
-
     data.value = data.value.filter((u) => u.id !== user.id);
-    
-    await fetchUsers();
+    console.log(user.id, user.firstName)
+
     console.log(`Usuario ${user.firstName} eliminado.`);
   } catch (error) {
     console.error('Error al eliminar usuario:', error);
@@ -177,8 +182,8 @@ const isValidEmail = (email) => {
 const fetchUsers = async () => {
   try {
     loading.value = true;
-    const users = await getUsers();
-    console.log(users)
+    const loginResult = await loginWithCredentials(props.username, props.password);  
+    const users = await getUsers(loginResult.token);
     if (Array.isArray(users)) {
       data.value = users.map(user => ({
         firstName: user.firstName,  //muy importante que aqui se llame igual lo que printeo a lo que busco en la respuesta de mi console.log(users)
@@ -229,13 +234,8 @@ watch(showModal, (newVal) => {
 
 .header {
   background-color: #a8c3ff;
-  min-height: 100vh;
-  min-width: 70vw;
-  margin-bottom: 16px;
+  padding: 30px;
 }
 
-.table-container {
-  size: 1px;
-}
 
 </style>

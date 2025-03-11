@@ -1,5 +1,5 @@
 <template>
-    <div class="Login-container" v-if="!isauthenticated">
+    <div v-if="!isauthenticated" class="Login-container">
         <div class="form-container">
             <h1>Gestión de Tiendas</h1>
             <div>
@@ -16,65 +16,60 @@
             </div>
         </div>
     </div>
-    <ListUsers v-if="isauthenticated && isAdmin" :username="authenticatedUser" :isAdmin="isAdmin"/>
 </template>
   
 <script setup>
 import {ref, onMounted, watch} from 'vue'
-import ListUsers from '@/components/ListUsers.vue';
 import { NInput, NButton, NCard, NSpace, NIcon } from 'naive-ui'
-import { LockClosedOutline as ForgotPasswordIcon} from '@vicons/ionicons5';
-import keycloak, { initKeycloak, forgotPassword } from '../../keycloak'
+import { LockClosedOutline as ForgotPasswordIcon, NuclearOutline} from '@vicons/ionicons5';
+import keycloak, { loginWithCredentials  } from '../../keycloak'
+import { useRouter } from 'vue-router';
 
 const username = ref('')
 const password = ref('')
+const users = ref([]);
 const isauthenticated = ref(false)
 const authenticatedUser = ref('');
-const isAdmin = ref(true)
-
-onMounted(() => {
-//   initKeycloak(isauthenticated);
-    initKeycloak(isauthenticated).then(() => {
-        if (isauthenticated.value) {
-            authenticatedUser.value = keycloak.tokenParsed?.preferred_username || 'Usuario';
-            isAdmin.value = keycloak.tokenParsed?.realm_access?.roles.includes('admin') || false;
-        }
-    });
-});
+const isAdmin = ref(false)
+const router = useRouter()
 
 const handleLogin = async () => {
-  try {
-    const response = await keycloak.login({
-        username: username.value,
-        password: password.value,
-        grantType: 'password',
-        clientId: 'frontend-ce',
-    });
-    console.log(username)
-    console.log(password)
-    if (response && keycloak.token) {
-        console.log('Token received:', keycloak.token);
-        const tokenParsed = keycloak.tokenParsed;
-        const email = tokenParsed?.email || '';
-        console.log(email)
-        authenticatedUser.value = tokenParsed?.preferred_username || 'Usuario';
-        if (email.endsWith('@upm.es')) {
-            isAdmin.value = true
-        } else {
-            isAdmin.value = false
-        }
+    try {
+        console.log("🔍 Intentando iniciar en frontend input sesión con:");
+        console.log("📝 Username input :", username.value);
+        console.log("🔒 Password input:", password.value);  
+
+        const result = await loginWithCredentials(username.value, password.value);
+
         isauthenticated.value = true;
-        console.log('Authenticated with {username + password}');
+        authenticatedUser.value = result.username;
+        isAdmin.value = result.roles.includes('admin');
+
+        console.log("✅ Usuario autenticado:", authenticatedUser.value);
+        console.log("🎭 Roles:", result.roles);
+        console.log("👑 ¿Es Admin?:", isAdmin.value);
+
+        router.push({ 
+            path: '/home', 
+            query: { 
+                username: authenticatedUser.value, 
+                isAdmin: isAdmin.value, 
+                password: password.value
+            } 
+        });
+        setTimeout(() => {
+            window.history.replaceState({}, '', '/home');
+        }, 100); 
+
+    } catch (error) {
+        console.error("❌ Error en login:", error);
+        alert("Usuario o contraseña incorrectos.");
     }
-  } catch (error) {
-    console.error('Authentication failed:', error);
-  }
 };
 
-
-watch(isauthenticated, (newValue) => {
+watch(authenticatedUser, (newValue) => {
     if (newValue) {
-        console.log('User is authenticated, displaying ListUsers component.');
+        console.log('User is authenticated, displaying ListUsers component.', newValue);
     }
 });
 
