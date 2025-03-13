@@ -1,5 +1,5 @@
 import axios from 'axios';
-import keycloak, { getAuthToken } from '../../keycloak'
+import keycloak, { getAdminToken } from '../../keycloak'
 
 export const getUsers = async (token) => {
     try {
@@ -47,7 +47,7 @@ export async function createUserKeycloak(user) {
         console.error('Error: El username debe tener entre 3 y 30 caracteres.');
         return;
     }
-    const token = keycloak.token;
+    const token = await getAdminToken()
 
     if (!token) {
         throw new Error('Token de autenticación no disponible.');
@@ -87,7 +87,7 @@ export async function deleteUserKeycloak(userId) {
             throw new Error('Usuario no encontrado.');
         }
 
-        const token = getAdminToken() //getAuthToken();
+        const token = await getAdminToken()
     
         const config = {
             headers: {
@@ -105,7 +105,7 @@ export async function deleteUserKeycloak(userId) {
 }
 
 export async function updateUserKeycloak(user) {
-    const token = keycloak.token;
+    const token = await getAdminToken()
 
     if (!token) {
         throw new Error('Token de autenticación no disponible.');

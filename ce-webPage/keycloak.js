@@ -9,33 +9,16 @@ const keycloak = new Keycloak({
 
 const authUrl = 'http://localhost:8080/realms/ComercioElectronico/protocol/openid-connect/token';
 
-export const getAuthToken = async () => {
-    let token = localStorage.getItem('access_token');
+export const getAdminToken = async () => {
+    const token = localStorage.getItem('access_token');
 
     if (!token) {
         throw new Error("❌ No hay token disponible. Inicia sesión primero.");
     }
 
+    console.log("🔑 Usando token de sesión actual:", token);
     return token;
 };
-
-export const getAdminToken = async () => {
-    try {
-        const response = await axios.post(authUrl, new URLSearchParams({
-            client_id: 'frontend-ce',
-            grant_type: 'password',
-            username,
-            password
-        }), {
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
-        });
-        return response.data.access_token;
-    } catch (error) {
-        console.error("❌ Error al obtener el token de administrador:", error.response?.data || error.message);
-        throw error;
-    }
-};
-
 
 export const loginWithCredentials = async (username, password) => {
     try {
