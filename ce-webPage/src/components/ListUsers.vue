@@ -232,10 +232,19 @@ watch(showModal, (newVal) => {
 
 <style scoped>
 
-.header {
-  background-color: #a8c3ff;
-  padding: 30px;
+.main-content {
+  flex: 1;
+  display: left;
+  justify-content: center; /* Centra horizontalmente */
+  align-items: center; /* Centra verticalmente */
+  height: 100vh; /* Asegura que ocupe toda la pantalla */
+  padding: 20px;
+  transition: margin-left 0.3s ease-in-out;
+  margin-left: 250px; /* 250px (sidebar) + 30px de margen */
 }
 
+.collapsed {
+  margin-left: 30px; /* Asegura que el margen izquierdo se mantenga cuando el sidebar está oculto */
+}
 
 </style>

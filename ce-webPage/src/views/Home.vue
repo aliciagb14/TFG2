@@ -1,9 +1,8 @@
 <template>
   <div class="container">
-    <Sidebar/>
-    <ListUsers v-if="isauthenticated && isAdmin" :username="authenticatedUser" :isAdmin="isAdmin" :password="password"/>
-    <!-- <TableStudent v-else-if="isauthenticated" :username="authenticatedUser"/> -->
-    <div class="content">
+    <Sidebar :isVisible="isSidebarVisible" @toggleSidebar="toggleSidebar" />
+    <div class="main-content" :class="{ 'collapsed': !isSidebarVisible }">
+      <ListUsers v-if="isauthenticated && isAdmin" :username="authenticatedUser" :isAdmin="isAdmin" :password="password"/>
       <router-view></router-view>
     </div>
   </div>
@@ -11,7 +10,6 @@
 
 <script setup>
 import {ref, onMounted, watch} from 'vue'
-
 import Sidebar from "@/components/Sidebar.vue";
 import ListUsers from "@/components/ListUsers.vue";
 import { useRouter, useRoute } from 'vue-router';
@@ -41,7 +39,7 @@ onMounted(() => {
 
 </script>
 
-<style scoped>
+<!-- <style scoped>
 h1 {
     text-align: center; /* Centra el texto horizontalmente */
     margin: 30px auto;
@@ -49,4 +47,22 @@ h1 {
     color: #333;
 }
 
+</style> -->
+
+<style scoped>
+.container {
+  display: flex;
+  height: 100vh;
+}
+
+.main-content {
+  flex: 1;
+  padding: 20px;
+  transition: margin-left 0.3s ease-in-out;
+  margin-left: 250px;
+}
+
+.collapsed {
+  margin-left: 0;
+}
 </style>
