@@ -3,7 +3,7 @@
     <Sidebar/>
     <n-grid-item class="header" span="12 m:21">
         <h2>Bienvenido, {{ props.username }}</h2>
-        <div>
+        <div class="header-container">
           <h2>Users</h2>
           <n-button @click="showModal=!showModal">
             <n-icon size="20">
@@ -69,22 +69,27 @@ const columns = [
     {
       title: 'Nombre',
       key: 'firstName',
+      width: 90,
     },
     {
       title: 'Apellidos',
       key: 'lastName',
+      width: 120,
     },
     {
       title: 'Correo Electrónico',
       key: 'email',
+      width: 200,
     },
     {
       title: 'Rol',
       key: 'rol',
+      width: 100,
     },
     {
       title: 'Año académico',
       key: 'añoAcademico',
+      width: 90,
     },
     {
       title: 'Acciones',
@@ -223,7 +228,6 @@ const handleUserAdded = (newUser) => {
   });
 };
 
-
 watch(showModal, (newVal) => {
   console.log('showModal cambio a: ', newVal);
 });
@@ -234,8 +238,13 @@ watch(showModal, (newVal) => {
 
 .header {
   background-color: #a8c3ff;
-  padding: 30px;
+  padding: 10px;
 }
-
+.header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
 
 </style>
