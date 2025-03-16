@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  minio:
+    image: minio/minio
+    container_name: minio
+    ports:
+      - "9000:9000"
+      - "9090:9090"
+    environment:
+      MINIO_ROOT_USER: admin
+      MINIO_ROOT_PASSWORD: password
+    volumes:
+      - minio_data:/data
+    command: server --console-address ":9090" /data
+
+  keycloak:
+    build: .
+    container_name: keycloak
+    ports:
+      - "8080:8080"
+    environment:
+      - MINIO_ENDPOINT=keycloak
+      - MINIO_PORT=9000
+      - MINIO_ACCESS_KEY=admin
+      - MINIO_SECRET_KEY=password
+      - MINIO_BUCKET=uploads
+    depends_on:
+      - minio
+
+volumes:
+  minio_data:

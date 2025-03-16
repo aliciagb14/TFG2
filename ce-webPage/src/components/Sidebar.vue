@@ -44,6 +44,7 @@
 </script>
 
 <style scoped>
+
 .sidebar {
   width: 0;
   background-color: #2c3e50;

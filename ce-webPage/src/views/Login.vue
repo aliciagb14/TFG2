@@ -19,7 +19,7 @@
         </div>
     </div> -->
 </template>
-  
+
 <script setup>
 import {ref, onMounted, watch} from 'vue'
 import Login  from '@/components/Login.vue'
@@ -121,42 +121,4 @@ watch(isauthenticated, (newValue) => {
 
 </script>
 
-
-<style scoped>
-    .Login-container {
-        background-color: #bed0f8;
-        width: 100vw;
-        height: 100vh;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-
-    h1 {
-        margin-bottom: 20px;
-        font-size: 2rem;
-        color: #333;
-    }
-
-    .input-container {
-        width: 200%;
-        align-content: center;
-    }
-
-    .n-input {
-        width: 100%;
-    }
-
-    .button-container {
-        display: flex;
-        justify-content: center;
-        gap: 10px;
-        margin-top: 10px;
-    }
-
-    .n-button {
-        padding: 10px 20px;
-        font-size: 16px;
-        border-radius: 5px;
-    }
-</style>
+<style scoped></style>
